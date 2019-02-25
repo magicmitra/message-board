@@ -6,7 +6,7 @@ class MessageBoardApp extends HTMLElement {
 
     this.api = new MessageBoardAPI(commentData);
     this.state = {
-      comments: this.api.getCommentsSortedByTime(),
+      comments: [],
     };
 
     // event listeners
@@ -30,6 +30,9 @@ class MessageBoardApp extends HTMLElement {
   }
 
   connectedCallback() {
+    this.api.getComments().then(comments => {
+      this.setState({ comments });
+    });
     this.render();
   }
 
@@ -65,10 +68,11 @@ class MessageBoardApp extends HTMLElement {
     this.querySelector('.add-comment form').addEventListener('submit', this.handleAddComment);
   }
 
-  handleSearchSubmit = event => {
+  handleSearchSubmit = async event => {
     event.preventDefault();
     const searchText = new FormData(event.target).get('search');
-    const updatedComments = this.api.filterCommentsByText(searchText);
+    // this.api.filterCommentsByText(searchText).then(updatedComments => this.setState({ comments: updatedComments }));
+    const updatedComments = await this.api.filterCommentsByText(searchText);
     this.setState({ comments: updatedComments });
   };
 
@@ -83,7 +87,6 @@ class MessageBoardApp extends HTMLElement {
   handleRemoveComment = event => {
     const confirmed = window.confirm(`Really delete ${event.detail}?`);
     if (confirmed) {
-      console.log('id', event.target.comment.id);
       const updatedComments = this.api.removeComment(event.target.comment.id);
       this.setState({ comments: updatedComments });
     }

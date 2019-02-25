@@ -1,6 +1,21 @@
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 class MessageBoardAPI {
   constructor(comments = []) {
     this.comments = comments;
+  }
+
+  /**
+   * Gets all comments
+   * @returns {array} Array of comments
+   */
+  getComments() {
+    return wait(1000).then(() => this.comments);
+    // return new Promise((resolve, reject) => {
+    //   setTimeout(resolve, 1000, this.comments);
+    // });
   }
 
   /**
@@ -62,7 +77,9 @@ class MessageBoardAPI {
    * @returns {array} Filtered array of comment objects
    */
   filterCommentsByText(substring = '') {
-    return this.comments.filter(comment => comment.text.toLowerCase().includes(substring.toLowerCase()));
+    return wait(1000).then(() =>
+      this.comments.filter(comment => comment.text.toLowerCase().includes(substring.toLowerCase()))
+    );
   }
 }
 
